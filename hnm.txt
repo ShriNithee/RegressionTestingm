@@ -1,0 +1,109 @@
+1.SI- Main.java
+package org.example;
+
+import java.util.Scanner;
+
+public class App {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter Principal: ");
+        double p = sc.nextDouble();
+
+        System.out.print("Enter Rate: ");
+        double r = sc.nextDouble();
+
+        System.out.print("Enter Time: ");
+        double t = sc.nextDouble();
+
+        double si = (p * r * t) / 100;
+
+        System.out.println("Simple Interest = " + si);
+    }
+}
+azure_pipelines.yml
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean package'
+    publishJUnitResults: false
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'target'
+    ArtifactName: 'JavaApplication'
+2.Student Pass/Fail
+Main.java
+package org.example;
+
+public class App {
+    public static String checkResult(int marks) {
+        if (marks >= 50)
+            return "Pass";
+        else
+            return "Fail";
+    }
+}
+MainTest.java
+package org.example;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class AppTest {
+
+    @Test
+    public void test35() {
+        assertEquals("Fail", App.checkResult(35));
+    }
+
+    @Test
+    public void test50() {
+        assertEquals("Pass", App.checkResult(50));
+    }
+
+    @Test
+    public void test75() {
+        assertEquals("Pass", App.checkResult(75));
+    }
+
+    @Test
+    public void test100() {
+        assertEquals("Pass", App.checkResult(100));
+    }
+}
+pom.xml
+inside dependencies
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>5.10.2</version>
+    <scope>test</scope>
+</dependency>
+inside build plugins:
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.2.5</version>
+</plugin>
+azure_pipelines.yml
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean test package'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
